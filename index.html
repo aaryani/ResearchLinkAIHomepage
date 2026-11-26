@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ResearchLink.ai — Making Australia's research capability visible</title>
+<meta name="description" content="ResearchLink.ai turns scattered research information into a connected map of Australia's research capability. A Swinburne University of Technology spin-out.">
+<meta property="og:title" content="ResearchLink.ai">
+<meta property="og:description" content="Making Australia's research capability visible. A Swinburne University of Technology spin-out.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://researchlink.ai/">
+<meta name="theme-color" content="#0c0e12">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --hero: #0c0e12; --hero-ink: #fff; --hero-muted: rgba(255,255,255,.68);
+    --paper: #f6f4f0; --card: #fff; --ink: #15161a; --muted: #585b63; --rule: #e0dcd4;
+    --accent: #FF751F; --accent-text: #b84a08;
+    --slab: "Roboto Slab", Georgia, "Times New Roman", serif;
+    --sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --gutter: clamp(16px, 5vw, 64px);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.6 var(--sans);
+    -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  .inner { max-width: 1120px; margin: 0 auto; padding: 0 var(--gutter); }
+  .skip { position: absolute; left: -999px; }
+  .skip:focus { left: 16px; top: 16px; background: #fff; color: #000; padding: 8px 12px; z-index: 10; }
+
+  /* Wordmark */
+  .wordmark { display: inline-block; line-height: 0; }
+  .wordmark img { height: 40px; width: auto; display: block; }
+
+  /* Hero */
+  .hero { position: relative; background: var(--hero); color: var(--hero-ink);
+    min-height: min(92vh, 860px); display: flex; flex-direction: column; overflow: hidden; }
+  .hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(90deg, var(--hero) 0%, var(--hero) 22%, transparent 60%); opacity: .9; }
+  .hero > * { position: relative; z-index: 1; }
+  .hero > .inner { width: 100%; }
+  .hero canvas { z-index: 0; }
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 28px; }
+  .nav ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; font-size: 15px; }
+  .nav ul a { text-decoration: none; color: var(--hero-muted); }
+  .nav ul a:hover { color: #fff; }
+  .hero-copy { flex: 1; display: flex; flex-direction: column; justify-content: center;
+    padding-top: 56px; padding-bottom: 96px; }
+  .hero-copy > * { max-width: min(560px, 52%); }
+  h1 { font: 400 clamp(36px, 5.4vw, 64px)/1.08 var(--slab); margin: 0 0 24px; letter-spacing: -.015em; text-wrap: balance; }
+  .lede { font-size: clamp(17px, 1.6vw, 20px); color: var(--hero-muted); margin: 0 0 36px; }
+  .origin { display: inline-flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 500;
+    letter-spacing: .02em; color: #fff; margin: 0; }
+  .origin::before { content: ""; width: 28px; height: 2px; background: var(--accent); }
+
+  /* Sections */
+  section { padding: clamp(64px, 9vw, 120px) 0; }
+  section + section { border-top: 1px solid var(--rule); }
+  .split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 6vw, 88px); }
+  .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase;
+    color: var(--accent-text); margin: 0 0 14px; }
+  h2 { font: 400 clamp(28px, 3.4vw, 40px)/1.15 var(--slab); margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+  .body p { margin: 0 0 18px; color: var(--muted); font-size: 18px; }
+  .body p:first-child { color: var(--ink); font-size: clamp(19px, 1.8vw, 22px); line-height: 1.5; }
+  .body p:last-child { margin-bottom: 0; }
+
+  .steps { list-style: none; margin: 36px 0 0; padding: 0; display: grid; gap: 0; counter-reset: s; }
+  .steps li { display: grid; grid-template-columns: 44px 1fr; gap: 4px 12px; padding: 20px 0; border-top: 1px solid var(--rule); counter-increment: s; }
+  .steps li::before { content: "0" counter(s); font: 500 15px var(--slab); color: var(--accent-text); padding-top: 3px; }
+  .steps h3 { font: 600 17px/1.4 var(--sans); margin: 0; }
+  .steps p { grid-column: 2; margin: 0; color: var(--muted); font-size: 16px; }
+
+  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 44px; }
+  .card { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 28px 26px 30px; }
+  .card svg { width: 44px; height: 44px; margin-bottom: 22px; display: block; }
+  .card h3 { font: 500 20px/1.3 var(--slab); margin: 0 0 10px; }
+  .card p { margin: 0; color: var(--muted); font-size: 16px; }
+
+  .why { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 4vw, 56px); margin-top: 44px; }
+  .why div { border-top: 2px solid var(--ink); padding-top: 18px; }
+  .why h3 { font: 500 20px/1.3 var(--slab); margin: 0 0 8px; }
+  .why p { margin: 0; color: var(--muted); font-size: 16px; }
+
+  /* Contact (closing section) + footer */
+  #contact { background: var(--hero); color: #fff; border: 0; padding: clamp(72px, 10vw, 128px) 0 clamp(56px, 8vw, 96px); }
+  #contact .eyebrow { color: var(--accent); }
+  #contact h2 { font-size: clamp(30px, 4vw, 48px); max-width: 18em; }
+  #contact .sub { color: var(--hero-muted); font-size: clamp(17px, 1.6vw, 20px); margin: 18px 0 0; max-width: 34em; }
+  .reach { margin-top: clamp(40px, 5vw, 56px); display: grid; grid-template-columns: minmax(0, 1fr) auto;
+    gap: 32px 48px; align-items: end; }
+  .reach .label { font-size: 13px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase;
+    color: var(--hero-muted); margin: 0 0 10px; }
+  .mail { font: 400 clamp(22px, 3vw, 34px)/1.2 var(--slab); color: #fff; text-decoration: none;
+    border-bottom: 2px solid var(--accent); padding-bottom: 4px; overflow-wrap: anywhere; }
+  .mail:hover { color: var(--accent); }
+  .spinout { margin: 0; color: var(--hero-muted); font-size: 14px; }
+  footer { background: var(--hero); color: var(--hero-muted); font-size: 13px; padding: 0 0 40px; }
+  footer .row { border-top: 1px solid rgba(255,255,255,.14); padding-top: 28px; display: flex; flex-wrap: wrap;
+    gap: 16px 32px; align-items: center; justify-content: space-between; }
+  footer .wordmark img { height: 30px; }
+  footer .meta { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+  footer .meta a { color: var(--hero-muted); text-decoration: none; }
+  footer .meta a:hover { color: #fff; }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+  @media (max-width: 860px) {
+    .split { grid-template-columns: 1fr; gap: 24px; }
+    .cards, .why { grid-template-columns: 1fr; }
+    .nav ul { display: none; }
+    .hero { min-height: 640px; }
+    .hero::after { background: var(--hero); opacity: .62; }
+    .hero-copy > * { max-width: 100%; }
+    .hero-copy { padding-bottom: 72px; }
+    .reach { grid-template-columns: 1fr; }
+    .wordmark img { height: 32px; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="hero">
+  <canvas id="graph" aria-hidden="true"></canvas>
+  <nav class="nav inner" aria-label="Sections">
+    <a class="wordmark" href="#"><img src="assets/logo/researchlink-logo-reversed.svg" alt="ResearchLink.ai" width="218" height="40"></a>
+    <ul>
+      <li><a href="#problem">The problem</a></li>
+      <li><a href="#what">What we do</a></li>
+      <li><a href="#who">Who it's for</a></li>
+      <li><a href="#why">Why us</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+  <div class="hero-copy inner">
+    <h1>Making Australia's research capability visible.</h1>
+    <p class="lede">ResearchLink.ai turns scattered research information into a connected map of who knows what, who has delivered what, and who works with whom.</p>
+    <p class="origin">A Swinburne University of Technology spin-out</p>
+  </div>
+</header>
+
+<main id="main">
+  <section id="problem">
+    <div class="inner split">
+      <div>
+        <p class="eyebrow">The problem</p>
+        <h2>Australia's research strengths are hard to see.</h2>
+      </div>
+      <div class="body">
+        <p>The knowledge of who can do what is spread across reports, PDFs and systems that don't talk to each other.</p>
+        <p>So finding the right expert, team or partner is slow, and often comes down to who you already know. Good collaborations are missed, and decisions about where to invest in research and development are made with less evidence than they deserve.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="what">
+    <div class="inner split">
+      <div>
+        <p class="eyebrow">What we do</p>
+        <h2>A connected map of national research capability.</h2>
+      </div>
+      <div class="body">
+        <p>ResearchLink.ai uses AI to bring fragmented research information together into one living picture of people, organisations, projects and the collaborations between them.</p>
+        <ol class="steps">
+          <li><h3>Connect</h3><p>Research information from many sources is linked into a single network, so relationships that were buried become visible.</p></li>
+          <li><h3>Understand</h3><p>AI fills the gaps, works out who is who, and keeps the context, so the picture can be trusted.</p></li>
+          <li><h3>Ask</h3><p>Decision-makers ask questions in plain language, by voice or text, and get evidence-based answers with clear visual maps.</p></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="who">
+    <div class="inner">
+      <p class="eyebrow">Who it's for</p>
+      <h2>Built for the people who connect research with impact.</h2>
+      <div class="cards">
+        <article class="card">
+          <svg viewBox="0 0 44 44" fill="none" aria-hidden="true"><path d="M8 34 22 10l14 24M14 24h16" stroke="#15161a" stroke-width="1.5"/><circle cx="22" cy="10" r="4" fill="#FF751F"/><circle cx="8" cy="34" r="3" fill="#15161a"/><circle cx="36" cy="34" r="3" fill="#15161a"/></svg>
+          <h3>Government and industry</h3>
+          <p>See where national capability sits, find credible partners, and invest with evidence.</p>
+        </article>
+        <article class="card">
+          <svg viewBox="0 0 44 44" fill="none" aria-hidden="true"><path d="M22 22 9 11M22 22l14-9M22 22 10 34M22 22l13 12" stroke="#15161a" stroke-width="1.5"/><circle cx="22" cy="22" r="4.5" fill="#FF751F"/><circle cx="9" cy="11" r="3" fill="#15161a"/><circle cx="36" cy="13" r="3" fill="#15161a"/><circle cx="10" cy="34" r="3" fill="#15161a"/><circle cx="35" cy="34" r="3" fill="#15161a"/></svg>
+          <h3>Universities and research offices</h3>
+          <p>Show research impact beyond publications, and find new partners in industry.</p>
+        </article>
+        <article class="card">
+          <svg viewBox="0 0 44 44" fill="none" aria-hidden="true"><path d="M10 14h24M10 14l6 18M34 14l-6 18M16 32h12M10 14l18 18M34 14 16 32" stroke="#15161a" stroke-width="1.5"/><circle cx="10" cy="14" r="3" fill="#15161a"/><circle cx="34" cy="14" r="3" fill="#15161a"/><circle cx="16" cy="32" r="3" fill="#15161a"/><circle cx="28" cy="32" r="4" fill="#FF751F"/></svg>
+          <h3>Research centres and hubs</h3>
+          <p>Reveal your collaboration network and tell the story of the impact it creates.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="why">
+    <div class="inner">
+      <p class="eyebrow">Why us</p>
+      <h2>An Australian capability, grown from Australian research.</h2>
+      <div class="why">
+        <div><h3>Born at Swinburne</h3><p>Built on more than a decade of university research into how research knowledge connects.</p></div>
+        <div><h3>Sovereign intelligence</h3><p>Designed and built in Australia to make national expertise visible to the people who need it.</p></div>
+        <div><h3>AI that understands research</h3><p>Not general-purpose search. AI that connects, completes and explains research information in context.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section id="contact" aria-labelledby="contact-title">
+  <div class="inner">
+    <p class="eyebrow">Get in touch</p>
+    <h2 id="contact-title">ResearchLink.ai is in development.</h2>
+    <p class="sub">We'll share more here as we get closer to launch. In the meantime, we're always glad to hear from people working to connect research with impact.</p>
+    <div class="reach">
+      <div>
+        <p class="label">Email</p>
+        <!-- The address is assembled by script so simple scrapers don't find it in the HTML. -->
+        <a class="mail" data-user="enquiries" data-domain="researchlink.ai" href="#contact">enquiries [at] researchlink [dot] ai</a>
+      </div>
+      <p class="spinout">A Swinburne University of Technology spin-out</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="inner">
+    <div class="row">
+      <a class="wordmark" href="#"><img src="assets/logo/researchlink-logo-reversed.svg" alt="ResearchLink.ai" width="163" height="30"></a>
+      <div class="meta">
+        <a class="mail-small" data-user="enquiries" data-domain="researchlink.ai" href="#contact">enquiries [at] researchlink [dot] ai</a>
+        <span>© 2026 Research Link Pty Ltd</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Build the mailto links at runtime so the address isn't sitting in the page source.
+document.querySelectorAll('[data-user][data-domain]').forEach(a => {
+  const addr = a.dataset.user + '@' + a.dataset.domain;
+  a.href = 'mailto:' + addr;
+  a.textContent = addr;
+});
+</script>
+
+<script>
+(() => {
+  'use strict';
+  const canvas = document.getElementById('graph');
+  if (!canvas || !canvas.getContext) return;
+  const hero = canvas.parentElement, off = document.createElement('canvas');
+  const INK = '255,255,255', ACCENT = '255,117,31';
+
+  const mulberry = seed => () => {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+  const gauss = rng => Math.sqrt(-2 * Math.log(Math.max(rng(), 1e-9))) * Math.cos(2 * Math.PI * rng());
+  const inside = (p, poly) => {
+    let c = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const [xi, yi] = poly[i], [xj, yj] = poly[j];
+      if ((yi > p[1]) !== (yj > p[1]) && p[0] < (xj - xi) * (p[1] - yi) / (yj - yi) + xi) c = !c;
+    }
+    return c;
+  };
+
+  // Rough outline of the mainland and Tasmania [lon, lat]. Used only to place nodes; never drawn.
+  const AUS = [[142.5,-10.7],[143.5,-12.5],[143.8,-14.5],[145.3,-15],[146,-17.5],[146.3,-19],[148.5,-20.2],[149.5,-22],[150.8,-23.5],[152.5,-25],[153.2,-26],[153.5,-28.2],[153,-30.5],[152.5,-32.5],[151.3,-33.8],[150.2,-36],[149.9,-37.5],[147.5,-38],[146.3,-39.1],[144.9,-38.3],[143.5,-38.8],[141,-38.1],[139.8,-37],[139.5,-35.8],[138.5,-35.5],[138.5,-34.8],[137.8,-35.2],[137.8,-32.6],[135.9,-34.9],[135,-33.5],[134,-32.7],[132,-32],[129,-31.6],[126,-32.3],[124,-33],[123.5,-33.9],[120,-33.9],[118,-35],[116,-35],[115,-34.3],[115,-33.5],[115.7,-32],[115,-30.5],[114.2,-28],[113.2,-26.2],[113.5,-24.5],[113.7,-22.6],[114.2,-21.8],[116.5,-20.6],[118.6,-20.3],[121,-19.5],[122.2,-18],[122.9,-16.5],[124.5,-16],[125.5,-14.5],[127,-13.9],[128.2,-14.9],[129.5,-14.9],[130,-13],[130.8,-12.4],[132.5,-12.1],[132.6,-11.2],[135,-12.2],[136.8,-12.2],[135.9,-14],[135.5,-15],[137.5,-16],[139.5,-17.5],[140.9,-17.5],[141.5,-15.5],[141.7,-13],[142.1,-11]];
+  const TAS = [[144.7,-40.7],[146.5,-41.1],[148.3,-40.9],[148.3,-42.2],[147.9,-43.2],[146.8,-43.6],[146,-43.5],[145.3,-42.5],[144.7,-41.2]];
+  const CITIES = [
+    { p: [144.96,-37.81], w: 5,   s: 1.7, main: 1 },  // Melbourne
+    { p: [151.21,-33.87], w: 5,   s: 1.6, main: 1 },  // Sydney
+    { p: [153.03,-27.47], w: 3.5, s: 1.6, main: 1 },  // Brisbane
+    { p: [149.13,-35.28], w: 3,   s: 1.0, main: 1 },  // Canberra
+    { p: [138.60,-34.93], w: 2.5, s: 1.4, main: 1 },  // Adelaide
+    { p: [115.86,-31.95], w: 3,   s: 1.6, main: 1 },  // Perth
+    { p: [147.33,-42.88], w: 1.2, s: 0.6, main: 1 },  // Hobart
+    { p: [130.84,-12.46], w: 1,   s: 1.1, main: 1 },  // Darwin
+    { p: [146.80,-19.26], w: .8,  s: 1.0 },           // Townsville
+    { p: [133.88,-23.70], w: .5,  s: 1.3 },           // Alice Springs
+    { p: [145.77,-16.92], w: .5,  s: 0.8 },           // Cairns
+  ];
+  const KX = .89, LON0 = 112.5, LAT0 = 10.2, SPANX = 36.8, SPANY = 33.6;
+  const onLand = ll => inside(ll, AUS) || inside(ll, TAS);
+
+  const makePath = pts => {
+    const cum = [0];
+    for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+    return { pts, cum, len: cum[cum.length - 1] };
+  };
+  const pointAt = (path, d) => {
+    d = Math.max(0, Math.min(path.len, d));
+    let i = 1;
+    while (i < path.cum.length - 1 && path.cum[i] < d) i++;
+    const f = (d - path.cum[i - 1]) / ((path.cum[i] - path.cum[i - 1]) || 1), a = path.pts[i - 1], b = path.pts[i];
+    return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
+  };
+  const arcPath = (a, b, bulge) => {
+    const dx = b[0] - a[0], dy = b[1] - a[1];
+    let nx = -dy, ny = dx; if (ny > 0) { nx = -nx; ny = -ny; }
+    const cx = (a[0] + b[0]) / 2 + nx * bulge, cy = (a[1] + b[1]) / 2 + ny * bulge, pts = [];
+    for (let i = 0; i <= 28; i++) {
+      const t = i / 28, u = 1 - t;
+      pts.push([u * u * a[0] + 2 * u * t * cx + t * t * b[0], u * u * a[1] + 2 * u * t * cy + t * t * b[1]]);
+    }
+    return makePath(pts);
+  };
+
+  let W = 0, H = 0, dpr = 1, paths = [], rng = mulberry(7);
+  const pulses = [], ripples = [];
+
+  function build() {
+    const r = hero.getBoundingClientRect();
+    W = Math.round(r.width); H = Math.round(r.height);
+    if (!W || !H) return;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    [canvas, off].forEach(c => { c.width = W * dpr; c.height = H * dpr; });
+    rng = mulberry(7); pulses.length = 0; ripples.length = 0;
+
+    const narrow = W < 860;
+    const s = Math.min(W * (narrow ? .94 : .56) / SPANX, H * (narrow ? .7 : .84) / SPANY);
+    const ox = (narrow ? W / 2 : W * .69) - SPANX * s / 2, oy = H * (narrow ? .5 : .53) - SPANY * s / 2;
+    const proj = ll => [ox + (ll[0] - LON0) * KX * s, oy + (-ll[1] - LAT0) * s];
+    const totalW = CITIES.reduce((a, c) => a + c.w, 0);
+
+    const nodes = CITIES.map(c => ({ ll: c.p, hub: c.main ? 2 : 1 }));
+    const N = narrow ? 300 : 560;
+    let guard = 0;
+    while (nodes.length < N && guard++ < 40000) {
+      let ll;
+      if (rng() < .58) {
+        let q = rng() * totalW, c = CITIES[0];
+        for (const k of CITIES) { if ((q -= k.w) <= 0) { c = k; break; } }
+        ll = [c.p[0] + gauss(rng) * c.s / KX, c.p[1] + gauss(rng) * c.s];
+      } else ll = [112 + rng() * 42, -10 - rng() * 34];
+      if (onLand(ll)) nodes.push({ ll, hub: 0 });
+    }
+    nodes.forEach(n => { [n.x, n.y] = proj(n.ll); n.r = n.hub === 2 ? 3.4 : n.hub ? 2.3 : .7 + rng() * 1.15; });
+
+    const dd = (a, b) => Math.hypot((a.ll[0] - b.ll[0]) * KX, a.ll[1] - b.ll[1]);
+    const links = [], seen = new Set(), adj = nodes.map(() => []);
+    nodes.forEach((a, i) => {
+      const near = [];
+      nodes.forEach((b, j) => { if (i !== j) { const d = dd(a, b); if (d < 4) near.push([d, j]); } });
+      near.sort((p, q) => p[0] - q[0]);
+      let made = 0;
+      for (const [d, j] of near) {
+        if (made >= 2) break;
+        const b = nodes[j];
+        if (d > 1.2 && !onLand([(a.ll[0] + b.ll[0]) / 2, (a.ll[1] + b.ll[1]) / 2])) continue;
+        made++;
+        const key = i < j ? i + '-' + j : j + '-' + i;
+        if (seen.has(key)) continue;
+        seen.add(key); links.push([i, j]); adj[i].push(j); adj[j].push(i);
+      }
+    });
+
+    const hubs = nodes.filter(n => n.hub === 2), arcs = [];
+    for (let i = 0; i < hubs.length; i++) for (let j = i + 1; j < hubs.length; j++)
+      arcs.push(arcPath([hubs[i].x, hubs[i].y], [hubs[j].x, hubs[j].y], .16));
+
+    const walks = [];
+    for (let k = 0; k < 60; k++) {
+      let cur = Math.floor(rng() * nodes.length), prev = -1; const pts = [[nodes[cur].x, nodes[cur].y]];
+      for (let h = 0; h < 6; h++) {
+        const opts = adj[cur].filter(j => j !== prev); if (!opts.length) break;
+        prev = cur; cur = opts[Math.floor(rng() * opts.length)]; pts.push([nodes[cur].x, nodes[cur].y]);
+      }
+      if (pts.length > 3) walks.push(makePath(pts));
+    }
+    paths = arcs.concat(arcs, walks);
+
+    // Static layer, drawn once.
+    const o = off.getContext('2d');
+    o.setTransform(dpr, 0, 0, dpr, 0, 0); o.clearRect(0, 0, W, H);
+    o.lineWidth = .7; o.strokeStyle = `rgba(${INK},.13)`;
+    o.beginPath();
+    links.forEach(([i, j]) => { o.moveTo(nodes[i].x, nodes[i].y); o.lineTo(nodes[j].x, nodes[j].y); });
+    o.stroke();
+    o.lineWidth = .8; o.strokeStyle = `rgba(${ACCENT},.2)`;
+    arcs.forEach(a => { o.beginPath(); a.pts.forEach((p, i) => i ? o.lineTo(p[0], p[1]) : o.moveTo(p[0], p[1])); o.stroke(); });
+    nodes.forEach(n => {
+      if (n.hub === 2) { o.fillStyle = `rgba(${ACCENT},.16)`; o.beginPath(); o.arc(n.x, n.y, 9, 0, 7); o.fill(); }
+      o.fillStyle = `rgba(${INK},${n.hub ? 1 : .82 * (.5 + n.r / 3.6)})`;
+      o.beginPath(); o.arc(n.x, n.y, n.r, 0, 7); o.fill();
+    });
+    paint(0);
+  }
+
+  let acc = 0;
+  function paint(dt) {
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(off, 0, 0);
+    if (!dt) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    acc += dt;
+    while (acc > .22 && paths.length) {
+      acc -= .22;
+      pulses.push({ path: paths[Math.floor(rng() * paths.length)], d: 0, rev: rng() < .5, v: 95 * (.7 + rng() * .6) });
+    }
+    for (let i = pulses.length - 1; i >= 0; i--) {
+      const p = pulses[i]; p.d += p.v * dt;
+      for (let k = 0; k < 9; k++) {
+        const d = p.d - k * 5; if (d < 0) break;
+        const pos = pointAt(p.path, p.rev ? p.path.len - d : d);
+        ctx.fillStyle = `rgba(${ACCENT},${(1 - k / 9) * .95})`;
+        ctx.beginPath(); ctx.arc(pos[0], pos[1], 2.3 - k * .18, 0, 7); ctx.fill();
+      }
+      if (p.d >= p.path.len) {
+        const e = pointAt(p.path, p.rev ? 0 : p.path.len);
+        ripples.push({ x: e[0], y: e[1], age: 0 }); pulses.splice(i, 1);
+      }
+    }
+    for (let i = ripples.length - 1; i >= 0; i--) {
+      const r = ripples[i]; r.age += dt;
+      const f = r.age / .9; if (f >= 1) { ripples.splice(i, 1); continue; }
+      ctx.strokeStyle = `rgba(${ACCENT},${(1 - f) * .7})`; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(r.x, r.y, 3 + f * 13, 0, 7); ctx.stroke();
+    }
+  }
+
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let visible = true, last = 0, raf = 0;
+  function loop(ms) {
+    const t = ms / 1000, dt = Math.min(.05, t - last || 0); last = t;
+    paint(dt);
+    raf = (visible && !still.matches && !document.hidden) ? requestAnimationFrame(loop) : 0;
+  }
+  const kick = () => { if (!raf && visible && !still.matches && !document.hidden) { last = 0; raf = requestAnimationFrame(loop); } };
+
+  if ('IntersectionObserver' in window)
+    new IntersectionObserver(es => { visible = es[0].isIntersecting; kick(); }).observe(hero);
+  document.addEventListener('visibilitychange', kick);
+  still.addEventListener && still.addEventListener('change', () => { paint(0); kick(); });
+  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { build(); kick(); }, 150); });
+
+  build(); kick();
+})();
+</script>
+</body>
+</html>
